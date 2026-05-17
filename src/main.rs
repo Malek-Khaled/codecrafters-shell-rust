@@ -3,11 +3,16 @@ use std::io::{self, Write};
 use std::path::Path;
 
 fn main() {
-    print!("$ ");
-    io::stdout().flush().unwrap();
-    let mut command = String::new();
-    io::stdin().read_line(&mut command).unwrap();
-    is_command_exist(&command);
+    loop {
+        print!("$ ");
+        io::stdout().flush().unwrap();
+        let mut command = String::new();
+        io::stdin().read_line(&mut command).unwrap();
+        if command.trim().eq("exit") {
+            break;
+        }
+        is_command_exist(&command);
+    }
 }
 
 fn is_command_exist(command: &str) -> bool {
