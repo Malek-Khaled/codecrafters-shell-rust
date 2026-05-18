@@ -20,8 +20,7 @@ fn main() {
             echo(&args);
         } else if args[0].is_empty() {
             continue;
-        }
-        if is_command_exist(args[0]) {
+        } else if is_command_exist(args[0]) {
             let output = std::process::Command::new(args[0])
                 .args(args[1..].iter())
                 .output()
@@ -66,4 +65,5 @@ fn echo(args: &[&str]) {
     for arg in args[1..].iter() {
         print!("{arg} ");
     }
+    println!();
 }
