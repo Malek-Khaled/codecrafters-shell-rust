@@ -1,6 +1,7 @@
 #[allow(unused_imports)]
 use std::io::{self, Write};
 use std::path::Path;
+use std::{env::var, path::PathBuf};
 
 const BULITINS: [&str; 3] = ["echo", "exit", "type"];
 
@@ -47,7 +48,9 @@ fn is_command_exist(command: &str) -> bool {
 // -------------------------
 fn type_com(commands: &[&str]) {
     let mut is_found = false;
+    let paths = var("PATH").unwrap();
     for command in commands[1..].iter() {
+        let paths_vec: Vec<&str> = paths.split(":").collect();
         for builtin in BULITINS {
             if command.eq(&builtin) {
                 println!("{command} is a shell builtin");
@@ -56,7 +59,22 @@ fn type_com(commands: &[&str]) {
             }
         }
         if !is_found {
-            println!("{command}: not found");
+            for path in paths_vec {
+                let path = PathBuf::from(path).read_dir();
+                if let Ok(path) = path {
+                    for entry in path.flatten() {
+                        let entry_string = entry.file_name().into_string().unwrap();
+                        if entry_string.eq(command) {
+                            println!("{command} is {}", entry.path().to_str().unwrap());
+                            is_found = true;
+                            break;
+                        }
+                    }
+                };
+            }
+            if !is_found {
+                println!("{command}: not found");
+            }
         }
     }
 }
