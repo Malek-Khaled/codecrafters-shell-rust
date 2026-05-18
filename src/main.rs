@@ -34,11 +34,17 @@ fn main() {
 }
 
 fn is_command_exist(command: &str) -> bool {
-    let bins_path = Path::new("/bin").read_dir().unwrap();
-    for entry in bins_path.flatten() {
-        let entry_string = entry.file_name().into_string().unwrap();
-        if entry_string.eq(command) {
-            return true;
+    let paths = var("PATH").unwrap();
+    let paths_vec: Vec<&str> = paths.split(":").collect();
+    for path in paths_vec {
+        let bins_path = Path::new(path).read_dir();
+        if let Ok(bins_path) = bins_path {
+            for entry in bins_path.flatten() {
+                let entry_string = entry.file_name().into_string().unwrap();
+                if entry_string.eq(command) && is_executable(entry.path()).unwrap() {
+                    return true;
+                }
+            }
         }
     }
     println!("{}: command not found", command);
