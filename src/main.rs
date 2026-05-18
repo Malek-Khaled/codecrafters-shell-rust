@@ -71,6 +71,9 @@ fn type_com(commands: &[&str]) {
                         }
                     }
                 };
+                if is_found {
+                    break;
+                }
             }
             if !is_found {
                 println!("{command}: not found");
