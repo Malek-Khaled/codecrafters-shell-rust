@@ -1,3 +1,4 @@
+use permissions::is_executable;
 #[allow(unused_imports)]
 use std::io::{self, Write};
 use std::path::Path;
@@ -64,7 +65,7 @@ fn type_com(commands: &[&str]) {
                 if let Ok(path) = path {
                     for entry in path.flatten() {
                         let entry_string = entry.file_name().into_string().unwrap();
-                        if entry_string.eq(command) {
+                        if entry_string.eq(command) && is_executable(entry.path()).unwrap() {
                             println!("{command} is {}", entry.path().to_str().unwrap());
                             is_found = true;
                             break;
