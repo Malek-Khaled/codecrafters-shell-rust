@@ -1,7 +1,5 @@
 use permissions::is_executable;
 use std::env::set_current_dir;
-use std::io::{Error, ErrorKind};
-use std::path;
 use std::{env::var, path::PathBuf};
 
 const BULITINS: [&str; 4] = ["echo", "exit", "type", "pwd"];
@@ -53,6 +51,6 @@ pub fn cd(args: &[&str]) {
     let path = String::from(args[1]);
     let result = set_current_dir(PathBuf::from(&path));
     if result.is_err() {
-        println!("cd: {path}: no such file or directory");
+        println!("cd: {path}: No such file or directory");
     }
 }
