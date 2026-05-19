@@ -1,8 +1,9 @@
 use permissions::is_executable;
+use std::env::home_dir;
 use std::env::set_current_dir;
 use std::{env::var, path::PathBuf};
 
-const BULITINS: [&str; 4] = ["echo", "exit", "type", "pwd"];
+const BULITINS: [&str; 5] = ["echo", "exit", "type", "pwd", "cd"];
 
 pub fn type_com(commands: &[&str]) {
     let mut is_found = false;
@@ -48,9 +49,14 @@ pub fn echo(args: &[&str]) {
 }
 
 pub fn cd(args: &[&str]) {
-    let path = String::from(args[1]);
-    let result = set_current_dir(PathBuf::from(&path));
+    let path = if args.len() != 1 {
+        let path_string = args[1].replace("~", home_dir().unwrap().to_str().unwrap());
+        PathBuf::from(path_string)
+    } else {
+        home_dir().unwrap()
+    };
+    let result = set_current_dir(&path);
     if result.is_err() {
-        println!("cd: {path}: No such file or directory");
+        println!("cd: {}: No such file or directory", path.display());
     }
 }
