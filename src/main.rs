@@ -19,6 +19,7 @@ fn main() {
             "type" => type_com(&args),
             "echo" => echo(&args),
             "pwd" => println!("{}", current_dir().unwrap().to_str().unwrap()),
+            "cd" => cd(&args),
             "" => continue,
             _ => {
                 if is_command_exist(args[0]) {

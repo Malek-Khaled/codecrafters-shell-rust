@@ -1,4 +1,5 @@
 use permissions::is_executable;
+use std::env::set_current_dir;
 use std::{env::var, path::PathBuf};
 
 const BULITINS: [&str; 4] = ["echo", "exit", "type", "pwd"];
@@ -44,4 +45,8 @@ pub fn echo(args: &[&str]) {
         print!("{arg} ");
     }
     println!();
+}
+
+pub fn cd(args: &[&str]) {
+    set_current_dir(PathBuf::from(args[1])).unwrap();
 }
