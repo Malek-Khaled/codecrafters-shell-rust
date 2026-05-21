@@ -1,9 +1,39 @@
 use permissions::is_executable;
 use std::env::home_dir;
 use std::env::set_current_dir;
+use std::fmt;
+use std::fmt::Display;
 use std::{env::var, path::PathBuf};
 
 const BULITINS: [&str; 5] = ["echo", "exit", "type", "pwd", "cd"];
+
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+struct ShellString {
+    string: String,
+}
+
+impl Display for ShellString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.formatting())
+    }
+}
+impl ShellString {
+    fn formatting(&self) -> String {
+        if !self.string.starts_with("\'") && !self.string.ends_with("\'") {
+            self.string
+                .replace("\"", "")
+                .replace("\'", "")
+                .replace("~", home_dir().unwrap().to_str().unwrap())
+        } else {
+            self.string.replace("\'", "").replace("\"", "")
+        }
+    }
+    fn from(str: &str) -> ShellString {
+        ShellString {
+            string: String::from(str),
+        }
+    }
+}
 
 pub fn type_com(commands: &[&str]) {
     let mut is_found = false;
@@ -43,15 +73,16 @@ pub fn type_com(commands: &[&str]) {
 
 pub fn echo(args: &[&str]) {
     for arg in args[1..].iter() {
-        print!("{arg} ");
+        let shell_string = ShellString::from(arg);
+        print!("{shell_string} ");
     }
     println!();
 }
 
 pub fn cd(args: &[&str]) {
     let path = if args.len() != 1 {
-        let path_string = args[1].replace("~", home_dir().unwrap().to_str().unwrap());
-        PathBuf::from(path_string)
+        let path_string = ShellString::from(args[1]);
+        PathBuf::from(path_string.formatting())
     } else {
         home_dir().unwrap()
     };
