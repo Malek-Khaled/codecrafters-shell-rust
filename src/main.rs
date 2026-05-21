@@ -12,7 +12,11 @@ fn main() {
         io::stdout().flush().unwrap();
         let mut command = String::new();
         io::stdin().read_line(&mut command).unwrap();
-        let args: Vec<&str> = command.trim().split(" ").collect();
+        let args: Vec<&str> = command
+            .trim()
+            .split(" ")
+            .filter(|x| !x.is_empty())
+            .collect();
 
         match args[0] {
             "exit" => break,
